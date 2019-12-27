@@ -3,6 +3,7 @@ package arafath.myappcom.uberclone;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,9 +19,11 @@ import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
+import com.parse.Parse;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
@@ -37,7 +40,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (e == null && user != null) {
                             FancyToast.makeText(MainActivity.this, "Anonymous User Logged In", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
                             user.put("as",userOneTime.getText().toString());
-                            user.saveInBackground();
+                            user.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    transitionToPassengerActivity();
+                                }
+                            });
                         } else {
 
                             FancyToast.makeText(MainActivity.this, e.getMessage(), FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
@@ -128,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         public void done(ParseException e) {
                             if(e==null){
                                 FancyToast.makeText(MainActivity.this, "Successfully Signed Up", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
-
+                                transitionToPassengerActivity();
                             }else{
 
                                 FancyToast.makeText(MainActivity.this, e.getMessage(), FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
@@ -142,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         public void done(ParseUser user, ParseException e) {
                             if(e == null && user != null){
                                 FancyToast.makeText(MainActivity.this, "Successfully Logged In", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
-
+                                transitionToPassengerActivity();
                             }else{
 
                                 FancyToast.makeText(MainActivity.this, e.getMessage(), FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
@@ -188,6 +196,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }catch(Exception e){
             e.printStackTrace();
+        }
+    }
+
+    private void transitionToPassengerActivity(){
+
+        if(ParseUser.getCurrentUser() != null && ParseUser.getCurrentUser().get("as").equals("Passenger")){
+        Intent intent = new Intent(MainActivity.this,PassengersActivity.class);
+        startActivity(intent);
+
         }
     }
 
