@@ -14,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -94,6 +95,18 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }else if(state == State.LOGIN){
 
+                    ParseUser.logInInBackground(userSign.getText().toString(), passSign.getText().toString(), new LogInCallback() {
+                        @Override
+                        public void done(ParseUser user, ParseException e) {
+                            if(e == null && user != null){
+                                FancyToast.makeText(MainActivity.this, "Successfully Logged Up", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+
+                            }else{
+
+                                FancyToast.makeText(MainActivity.this, e.getMessage(), FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+                            }
+                        }
+                    });
                 }
             }
         });
