@@ -4,12 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import com.parse.LogOutCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +49,55 @@ public class MainActivity extends AppCompatActivity {
         driver = findViewById(R.id.driverRD);
         passenger = findViewById(R.id.passenRD);
 
+        if(ParseUser.getCurrentUser() != null){
+            ParseUser.getCurrentUser().logOutInBackground(new LogOutCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e==null){
+                        Log.i("Check","Success");
+                    }
+                }
+            });
+        }
+
+        signInbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(state == State.SINGUP){
+
+                    if( (driver.isChecked() == false && passenger.isChecked() == false) || userSign.getText().toString().equals("") || passSign.getText().toString().equals("") ){
+                        FancyToast.makeText(MainActivity.this, "Username, password, driver or passenger required", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+                        return;
+                    }
+
+                    ParseUser appUser = new ParseUser();
+                    appUser.setUsername(userSign.getText().toString());
+                    appUser.setPassword(passSign.getText().toString());
+
+                    if(driver.isChecked()){
+                        appUser.put("as","Driver");
+                    }else if(passenger.isChecked()){
+                        appUser.put("as","Passenger");
+                    }
+
+                    appUser.signUpInBackground(new SignUpCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if(e==null){
+                                FancyToast.makeText(MainActivity.this, "Successfully Signed Up", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+
+                            }else{
+
+                                FancyToast.makeText(MainActivity.this, e.getMessage(), FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+                            }
+                        }
+                    });
+                }else if(state == State.LOGIN){
+
+                }
+            }
+        });
+
     }
 
     @Override
@@ -68,4 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
