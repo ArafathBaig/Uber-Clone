@@ -99,14 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         if(ParseUser.getCurrentUser() != null){
-            ParseUser.getCurrentUser().logOutInBackground(new LogOutCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e==null){
-                        Log.i("Check","Success");
-                    }
-                }
-            });
+            transitionToPassengerActivity();
         }
 
         oneTimebtn.setOnClickListener(this);
