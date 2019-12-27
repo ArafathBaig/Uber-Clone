@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
             }
+        }else{
+            FancyToast.makeText(MainActivity.this, "Missing or Incorrect information.", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+
         }
     }
 
@@ -73,6 +77,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         radioGroup = findViewById(R.id.radioGroup);
         driver = findViewById(R.id.driverRD);
         passenger = findViewById(R.id.passenRD);
+
+
+        userOneTime.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
+                    onClick(oneTimebtn);
+                }
+
+                return false;
+            }
+        });
 
         if(ParseUser.getCurrentUser() != null){
             ParseUser.getCurrentUser().logOutInBackground(new LogOutCallback() {
