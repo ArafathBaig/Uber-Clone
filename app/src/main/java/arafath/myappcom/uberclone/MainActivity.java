@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -16,12 +17,35 @@ import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
+import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
+    @Override
+    public void onClick(View v) {
+        if(userOneTime.getText().toString().equals("Driver") || userOneTime.getText().toString().equals("Passenger")) {
+
+            if (ParseUser.getCurrentUser() == null) {
+                ParseAnonymousUtils.logIn(new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        if (e == null && user != null) {
+                            FancyToast.makeText(MainActivity.this, "Anonymous User Logged In", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+                            user.put("as",userOneTime.getText().toString());
+                            user.saveInBackground();
+                        } else {
+
+                            FancyToast.makeText(MainActivity.this, e.getMessage(), FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
+            }
+        }
+    }
 
     enum State{
         SINGUP,LOGIN;
@@ -61,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        oneTimebtn.setOnClickListener(this);
+
         signInbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseUser user, ParseException e) {
                             if(e == null && user != null){
-                                FancyToast.makeText(MainActivity.this, "Successfully Logged Up", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
+                                FancyToast.makeText(MainActivity.this, "Successfully Logged In", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
 
                             }else{
 
@@ -138,6 +164,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void rootLayoutTapped(View view) {
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 

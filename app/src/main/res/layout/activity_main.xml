@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:alpha=".6"
     android:background="@drawable/uber_image"
-    tools:context=".MainActivity" >
+    android:onClick="rootLayoutTapped"
+    tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/textView"
