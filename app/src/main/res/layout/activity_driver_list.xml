@@ -14,10 +14,10 @@
         android:text="View Passenger List Here" />
 
     <Button
-        android:id="@+id/btnUpdateList"
+        android:id="@+id/btnpassengerReq"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update the List" />
+        android:text="Get Nearby Passengers" />
 
     <ListView
         android:id="@+id/requestListView"
