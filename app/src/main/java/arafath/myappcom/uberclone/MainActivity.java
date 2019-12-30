@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 @Override
                                 public void done(ParseException e) {
                                     transitionToPassengerActivity();
+                                    transitionToDriverRequestList();
                                 }
                             });
                         } else {
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(ParseUser.getCurrentUser() != null){
             transitionToPassengerActivity();
+            transitionToDriverRequestList();
         }
 
         oneTimebtn.setOnClickListener(this);
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(e==null){
                                 FancyToast.makeText(MainActivity.this, "Successfully Signed Up", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
                                 transitionToPassengerActivity();
+                                transitionToDriverRequestList();
                             }else{
 
                                 FancyToast.makeText(MainActivity.this, e.getMessage(), FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
@@ -144,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(e == null && user != null){
                                 FancyToast.makeText(MainActivity.this, "Successfully Logged In", FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
                                 transitionToPassengerActivity();
+                                transitionToDriverRequestList();
                             }else{
 
                                 FancyToast.makeText(MainActivity.this, e.getMessage(), FancyToast.INFO, Toast.LENGTH_SHORT, true).show();
@@ -200,6 +204,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+
+    private void transitionToDriverRequestList(){
+        if(ParseUser.getCurrentUser() != null){
+            if(ParseUser.getCurrentUser().get("as").equals("Driver")){
+                Intent intent = new Intent(MainActivity.this,DriverActivityList.class);
+                startActivity(intent);
+            }
+        }
+    }
+
 
 
 }
