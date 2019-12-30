@@ -62,6 +62,16 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
 
          listView.setAdapter(arrayAdapter);
          driverReq.clear();
+
+          if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+              try {
+                  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000000, 0, locationListener);
+              }catch (Exception e){
+                  e.printStackTrace();
+              }
+          }
+
     }
 
     @Override
@@ -98,6 +108,10 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
 
                      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000000, 0, locationListener);
 
+                     Location currentPassengerLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                     updatePassengerLocation(currentPassengerLocation);
+
+
                  } else if (Build.VERSION.SDK_INT >= 23) {
 
                      if (ContextCompat.checkSelfPermission(DriverActivityList.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -107,7 +121,7 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
 
                      } else {
 
-                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000000, 0, locationListener);
+                        // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000000, 0, locationListener);
 
                          Location currentPassengerLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                          updatePassengerLocation(currentPassengerLocation);
@@ -129,8 +143,8 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
                      if (ContextCompat.checkSelfPermission(DriverActivityList.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                          locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000000, 0, locationListener);
 
-                         Location currentPassengerLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                         updatePassengerLocation(currentPassengerLocation);
+                        // Location currentPassengerLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                         
 
                      }
                  }
