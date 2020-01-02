@@ -7,4 +7,6 @@
     <string name="back4app_app_id">qknSwxpub1BMfb6gxsrSnwGIRaQitJDZCn4pCjSq</string>
     <string name="back4app_client_key">d5LsBXZiPkOQ421jehxftqkjqkNi3L08UV4ST8Vn</string>
     <string name="title_activity_passengers">Map</string>
+    <string name="title_activity_z">Map</string>
+    <string name="title_activity_view_location_map">Map</string>
 </resources>
