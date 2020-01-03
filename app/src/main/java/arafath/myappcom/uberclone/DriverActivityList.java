@@ -240,6 +240,15 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        FancyToast.makeText(this,"This is working",Toast.LENGTH_SHORT,FancyToast.INFO,true).show();
+       // FancyToast.makeText(this,"This is working",Toast.LENGTH_SHORT,FancyToast.INFO,true).show();
+
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            Location cdLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            Intent intent = new Intent(DriverActivityList.this,ViewLocationMapActivity.class);
+            intent.putExtra("dLatitude",cdLocation.getLatitude());
+            intent.putExtra("dLongitude",cdLocation.getLongitude());
+            startActivity(intent);
+        }
     }
 }
