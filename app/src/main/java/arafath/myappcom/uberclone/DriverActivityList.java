@@ -187,7 +187,7 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
 
     if(driverLocation!= null){
 
-        driverReq.clear();
+        driverReq.size();
         final ParseGeoPoint driverCurrentLocation = new ParseGeoPoint(driverLocation.getLatitude(),driverLocation.getLongitude()) ;
         ParseQuery<ParseObject> requestCarQuery = ParseQuery.getQuery("RequestCar");
         requestCarQuery.whereNear("PassengerLocation",driverCurrentLocation);
@@ -199,12 +199,12 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
                     if (objects.size() > 0) {
                         for (ParseObject nearCar : objects) {
 
-//                            if(driverReq.size() >0){
+//                           if(driverReq.size() >0){
 //                                driverReq.clear();
 //                            }
 
-                            if(passengerLongitude.size() > 0){
-                                passengerLongitude.clear();
+                            if(passengerLatitudes.size() > 0){
+                                passengerLatitudes.clear();
                             }
 
                             if(passengerLongitude.size() > 0){
@@ -219,7 +219,7 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
                             passengerLatitudes.add(pLocation.getLatitude());
                             passengerLongitude.add(pLocation.getLongitude());
 
-                            Log.i("Check","Here once")   ;
+                            Log.i("Check","Here once");
 
                         }
 
@@ -240,15 +240,19 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-       // FancyToast.makeText(this,"This is working",Toast.LENGTH_SHORT,FancyToast.INFO,true).show();
+        // FancyToast.makeText(this,"This is working",Toast.LENGTH_SHORT,FancyToast.INFO,true).show();
 
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location cdLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            Intent intent = new Intent(DriverActivityList.this,ViewLocationMapActivity.class);
-            intent.putExtra("dLatitude",cdLocation.getLatitude());
-            intent.putExtra("dLongitude",cdLocation.getLongitude());
-            startActivity(intent);
+            if (cdLocation != null) {
+                Intent intent = new Intent(DriverActivityList.this, ViewLocationMapActivity.class);
+                intent.putExtra("dLatitude", cdLocation.getLatitude());
+                intent.putExtra("dLongitude", cdLocation.getLongitude());
+                intent.putExtra("pLatitude", passengerLatitudes.get(position));
+                intent.putExtra("pLongitude", passengerLongitude.get(position));
+                startActivity(intent);
+            }
         }
     }
 }

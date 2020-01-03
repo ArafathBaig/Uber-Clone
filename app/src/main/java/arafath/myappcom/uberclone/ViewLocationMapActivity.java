@@ -3,13 +3,20 @@ package arafath.myappcom.uberclone;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.shashank.sony.fancytoastlib.FancyToast;
+
+import java.util.ArrayList;
 
 public class ViewLocationMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -39,9 +46,34 @@ public class ViewLocationMapActivity extends FragmentActivity implements OnMapRe
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        //FancyToast.makeText(this,"Longitude: "+getIntent().getDoubleExtra("dLongitude",0), Toast.LENGTH_SHORT,FancyToast.INFO,true ).show();
+
+
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+      LatLng dLocation = new LatLng(getIntent().getDoubleExtra("dLatitude",0), getIntent().getDoubleExtra("dLongitude",0));
+//        mMap.addMarker(new MarkerOptions().position(dLocation).title("Driver Location"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(dLocation));
+
+        LatLng pLocation = new LatLng(getIntent().getDoubleExtra("pLatitude",0),getIntent().getDoubleExtra("pLongitude",0));
+//        mMap.addMarker(new MarkerOptions().position(pLocation).title("Passenger Location"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(pLocation));
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        Marker driverMarker  = mMap.addMarker(new MarkerOptions().position(dLocation).title("Driver Location"));
+        Marker passengerMarker = mMap.addMarker(new MarkerOptions().position(pLocation).title("Passenger Location"));
+
+        ArrayList<Marker> markers = new ArrayList<>();
+        markers.add(driverMarker);
+        markers.add(passengerMarker);
+
+        for(Marker marker : markers){
+            builder.include(marker.getPosition());
+        }
+
+        LatLngBounds bounds = builder.build();
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,0);
+        mMap.animateCamera(cameraUpdate);
     }
 }
