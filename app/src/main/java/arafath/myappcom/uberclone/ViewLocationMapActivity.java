@@ -3,6 +3,8 @@ package arafath.myappcom.uberclone;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 public class ViewLocationMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private Button btnRide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,18 @@ public class ViewLocationMapActivity extends FragmentActivity implements OnMapRe
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        btnRide = findViewById(R.id.btnGiveRide);
+
+        btnRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FancyToast.makeText(ViewLocationMapActivity.this,getIntent().getStringExtra("rUsername")+" ", Toast.LENGTH_LONG,FancyToast.INFO,true).show();
+            }
+        });
+
+
     }
 
 

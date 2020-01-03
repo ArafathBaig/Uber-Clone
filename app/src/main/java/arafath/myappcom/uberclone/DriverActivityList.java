@@ -47,6 +47,7 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
     private ArrayAdapter arrayAdapter;
     private ArrayList<Double> passengerLatitudes;
     private ArrayList<Double> passengerLongitude;
+    private ArrayList<String> requestCarUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +61,14 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
           driverReq = new ArrayList<>();
           passengerLatitudes = new ArrayList<>();
           passengerLongitude = new ArrayList<>();
+          requestCarUsername= new ArrayList<>();
           getReq = findViewById(R.id.btnpassengerReq);
           getReq.setOnClickListener(this);
          arrayAdapter = new ArrayAdapter(DriverActivityList.this,android.R.layout.simple_list_item_1,driverReq);
 
 
          listView.setAdapter(arrayAdapter);
+
          driverReq.clear();
 
 
@@ -187,9 +190,8 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
 
     if(driverLocation!= null){
 
-        driverReq.size();
         final ParseGeoPoint driverCurrentLocation = new ParseGeoPoint(driverLocation.getLatitude(),driverLocation.getLongitude()) ;
-        ParseQuery<ParseObject> requestCarQuery = ParseQuery.getQuery("RequestCar");
+        final ParseQuery<ParseObject> requestCarQuery = ParseQuery.getQuery("RequestCar");
         requestCarQuery.whereNear("PassengerLocation",driverCurrentLocation);
 
         requestCarQuery.findInBackground(new FindCallback<ParseObject>() {
@@ -197,11 +199,11 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
             public void done(List<ParseObject> objects, ParseException e) {
                 if (e == null) {
                     if (objects.size() > 0) {
-                        for (ParseObject nearCar : objects) {
 
-//                           if(driverReq.size() >0){
-//                                driverReq.clear();
-//                            }
+
+                           if(driverReq.size() >0){
+                                driverReq.clear();
+                            }
 
                             if(passengerLatitudes.size() > 0){
                                 passengerLatitudes.clear();
@@ -211,6 +213,12 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
                                 passengerLongitude.clear();
                             }
 
+                            if(requestCarUsername.size() > 0) {
+                                requestCarUsername.clear();
+                            }
+
+                        for (ParseObject nearCar : objects) {
+
                             ParseGeoPoint pLocation = (ParseGeoPoint) nearCar.get("PassengerLocation");
                             Double kmsDistance = driverCurrentLocation.distanceInMilesTo((pLocation));
                             float roundedKMSDistance = Math.round(kmsDistance * 10) / 10;
@@ -218,6 +226,7 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
 
                             passengerLatitudes.add(pLocation.getLatitude());
                             passengerLongitude.add(pLocation.getLongitude());
+                            requestCarUsername.add(nearCar.get("username").toString());
 
                             Log.i("Check","Here once");
 
@@ -251,6 +260,7 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
                 intent.putExtra("dLongitude", cdLocation.getLongitude());
                 intent.putExtra("pLatitude", passengerLatitudes.get(position));
                 intent.putExtra("pLongitude", passengerLongitude.get(position));
+                intent.putExtra("rUsername",requestCarUsername.get(position));
                 startActivity(intent);
             }
         }
