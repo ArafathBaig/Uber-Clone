@@ -193,7 +193,7 @@ public class DriverActivityList extends AppCompatActivity implements View.OnClic
         final ParseGeoPoint driverCurrentLocation = new ParseGeoPoint(driverLocation.getLatitude(),driverLocation.getLongitude()) ;
         final ParseQuery<ParseObject> requestCarQuery = ParseQuery.getQuery("RequestCar");
         requestCarQuery.whereNear("PassengerLocation",driverCurrentLocation);
-
+        requestCarQuery.whereDoesNotExist("DriverOfMe");
         requestCarQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {

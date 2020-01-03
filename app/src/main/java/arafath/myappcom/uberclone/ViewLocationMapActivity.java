@@ -2,6 +2,8 @@ package arafath.myappcom.uberclone;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,9 +18,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ViewLocationMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -35,12 +44,37 @@ public class ViewLocationMapActivity extends FragmentActivity implements OnMapRe
         mapFragment.getMapAsync(this);
 
         btnRide = findViewById(R.id.btnGiveRide);
+        btnRide.setText("Shall we give "+getIntent().getStringExtra("rUsername")+" a ride?");
 
         btnRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                FancyToast.makeText(ViewLocationMapActivity.this,getIntent().getStringExtra("rUsername")+" ", Toast.LENGTH_LONG,FancyToast.INFO,true).show();
+                final ParseQuery<ParseObject> requestCar = ParseQuery.getQuery("RequestCar");
+                requestCar.whereEqualTo("username",getIntent().getStringExtra("rUsername"));
+                requestCar.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> objects, ParseException e) {
+                        if(objects.size() > 0 && e == null){
+                            for(ParseObject object : objects){
+                                object.put("DriverOfUser", ParseUser.getCurrentUser().getUsername());
+                                object.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if(e == null){
+                                            Intent googleInten = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr="+
+                                                    getIntent().getDoubleExtra("dLatitude",0)+","+
+                                                    getIntent().getDoubleExtra("dLongitude",0)+
+                                                    " &" + "daddr=" + getIntent().getDoubleExtra("pLatitude",0) + "," +
+                                                    getIntent().getDoubleExtra("pLongitude",0)));
+                                            startActivity(googleInten);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
             }
         });
 
